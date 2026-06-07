@@ -13,7 +13,7 @@ export function validate(schema: ZodSchema) {
     } catch (error) {
       if (error instanceof ZodError) {
         // Formata os erros Zod para um objeto legível
-        const erros = error.errors.map((e) => ({
+        const erros = error.issues.map((e) => ({
           campo: e.path.join("."),
           mensagem: e.message,
         }));

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { prisma } from "../prisma/client";
 import { AppError } from "../middlewares/errorHandler";
 import { config } from "../config";
@@ -33,6 +34,7 @@ function gerarRefreshToken(usuario: { id: string; nome: string; email: string })
     sub: usuario.id,
     email: usuario.email,
     type: "refresh",
+    jti: crypto.randomUUID(), // Garante que cada token gerado é único, mesmo no mesmo segundo
   };
 
   return jwt.sign(payload, config.jwtSecret, {
