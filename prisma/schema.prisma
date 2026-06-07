@@ -1,0 +1,60 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Categoria {
+  id        String     @id @default(cuid())
+  nome      String
+  icone     String
+  cor       String
+  criadoEm  DateTime   @default(now())
+  produtos  Produto[]
+
+  @@map("categorias")
+}
+
+model Produto {
+  id                  String         @id @default(cuid())
+  nome                String
+  quantidade          Int            @default(0)
+  quantidadeMinima    Int            @default(0)
+  preco               Float
+  unidade             String         @default("un")
+  observacao          String?
+  foto                String?
+  ultimaMovimentacao  DateTime       @default(now())
+  criadoEm            DateTime       @default(now())
+  atualizadoEm        DateTime       @updatedAt
+  categoriaId         String
+  categoria           Categoria      @relation(fields: [categoriaId], references: [id])
+  movimentacoes       Movimentacao[]
+
+  @@map("produtos")
+}
+
+model Usuario {
+  id        String   @id @default(cuid())
+  nome      String
+  email     String   @unique
+  senha     String
+  criadoEm  DateTime @default(now())
+
+  @@map("usuarios")
+}
+
+model Movimentacao {
+  id          String   @id @default(cuid())
+  tipo        String   // "ENTRADA" | "SAIDA"
+  quantidade  Int
+  observacao  String?
+  criadoEm    DateTime @default(now())
+  produtoId   String
+  produto     Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@map("movimentacoes")
+}
