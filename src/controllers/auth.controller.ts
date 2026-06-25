@@ -24,7 +24,7 @@ function gerarToken(usuario: { id: string; nome: string; email: string }): strin
 
   // sign(payload, secret, options)
   return jwt.sign(payload, config.jwtSecret, {
-    expiresIn: config.jwtExpiresIn, // "7d"
+    expiresIn: config.jwtExpiresIn as any, // "7d"
   });
 }
 

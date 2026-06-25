@@ -23,7 +23,7 @@ export class CategoriaController {
     try {
       const { id } = req.params;
       const categoria = await prisma.categoria.findUnique({
-        where: { id },
+        where: { id: id as string },
         include: { produtos: { orderBy: { nome: "asc" } } },
       });
       if (!categoria) throw new AppError("Categoria não encontrada", 404);

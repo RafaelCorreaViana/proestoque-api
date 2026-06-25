@@ -42,7 +42,7 @@ export class ProdutoController {
       const { id } = req.params;
 
       const produto = await prisma.produto.findUnique({
-        where: { id },
+        where: { id: id as string },
         include: { categoria: true },
       });
 
@@ -122,7 +122,7 @@ export class ProdutoController {
       } = req.body;
 
       // Verifica se o produto existe antes de atualizar
-      const produtoExiste = await prisma.produto.findUnique({ where: { id } });
+      const produtoExiste = await prisma.produto.findUnique({ where: { id: id as string } });
       if (!produtoExiste) {
         throw new AppError("Produto não encontrado", 404);
       }
@@ -134,7 +134,7 @@ export class ProdutoController {
       }
 
       const produto = await prisma.produto.update({
-        where: { id },
+        where: { id: id as string },
         data: {
           // Spread + undefined: só atualiza campos que foram enviados
           // Se nome não veio no body, mantém o valor atual do banco
@@ -164,12 +164,12 @@ export class ProdutoController {
       const { id } = req.params;
 
       // Verifica se existe antes de deletar
-      const produtoExiste = await prisma.produto.findUnique({ where: { id } });
+      const produtoExiste = await prisma.produto.findUnique({ where: { id: id as string } });
       if (!produtoExiste) {
         throw new AppError("Produto não encontrado", 404);
       }
 
-      await prisma.produto.delete({ where: { id } });
+      await prisma.produto.delete({ where: { id: id as string } });
 
       // 204 No Content — padrão REST para exclusão bem-sucedida (sem body)
       res.status(204).send();
@@ -199,7 +199,7 @@ export class ProdutoController {
       }
 
       // Verifica se o produto existe
-      const produto = await prisma.produto.findUnique({ where: { id } });
+      const produto = await prisma.produto.findUnique({ where: { id: id as string } });
       if (!produto) {
         throw new AppError("Produto não encontrado", 404);
       }
@@ -213,14 +213,14 @@ export class ProdutoController {
       const [movimentacao, produtoAtualizado] = await prisma.$transaction([
         prisma.movimentacao.create({
           data: {
-            produtoId: id,
+            produtoId: id as string,
             tipo: tipoUpper,
             quantidade: qtdNum,
             observacao: observacao ? String(observacao) : null
           }
         }),
         prisma.produto.update({
-          where: { id },
+          where: { id: id as string },
           data: {
             quantidade: {
               increment: tipoUpper === "ENTRADA" ? qtdNum : -qtdNum
@@ -247,13 +247,13 @@ export class ProdutoController {
       const { id } = req.params;
 
       // Verifica se o produto existe
-      const produtoExiste = await prisma.produto.findUnique({ where: { id } });
+      const produtoExiste = await prisma.produto.findUnique({ where: { id: id as string } });
       if (!produtoExiste) {
         throw new AppError("Produto não encontrado", 404);
       }
 
       const movimentacoes = await prisma.movimentacao.findMany({
-        where: { produtoId: id },
+        where: { produtoId: id as string },
         orderBy: { criadoEm: "desc" }
       });
 
