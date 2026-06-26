@@ -11,6 +11,12 @@ const app = express();
 // Em produção, restrinja as origens: cors({ origin: "https://seuapp.com" })
 app.use(cors());
 
+// Força o fechamento da conexão HTTP após o envio da resposta (evita bugs de Keep-Alive/stale socket no Android)
+app.use((_req, res, next) => {
+  res.setHeader("Connection", "close");
+  next();
+});
+
 // Habilita leitura de req.body como JSON (obrigatório para POST/PUT)
 app.use(express.json());
 
